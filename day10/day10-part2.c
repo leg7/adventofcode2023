@@ -108,7 +108,6 @@ i32 main(void)
 		getchar();
 	}
 	enum MapState mapState[LINE_COUNT][LINE_SIZE] = { LOOP_TBD };
-	enum Direction lastTurn;
 	Coordinates pos = loopStart;
 	mapState[pos.line][pos.col] = LOOP_PART;
 
@@ -177,13 +176,11 @@ i32 main(void)
 					mapStateSetBelow(mapState, pos, LOOP_RIGHT);
 					++pos.col;
 					going = RIGHT;
-					lastTurn = LEFT;
 			} else {
 					mapStateSetLeft(mapState, pos, LOOP_LEFT);
 					mapStateSetBelow(mapState, pos, LOOP_LEFT);
 					--pos.line;
 					going = UP;
-					lastTurn = RIGHT;
 			}
 			break;
 
@@ -193,13 +190,11 @@ i32 main(void)
 					mapStateSetBelow(mapState, pos, LOOP_LEFT);
 					--pos.col;
 					going = LEFT;
-					lastTurn = RIGHT;
 			} else {
 					mapStateSetRight(mapState, pos, LOOP_RIGHT);
 					mapStateSetBelow(mapState, pos, LOOP_RIGHT);
 					--pos.line;
 					going = UP;
-					lastTurn = LEFT;
 			}
 			break;
 
@@ -209,13 +204,11 @@ i32 main(void)
 					mapStateSetAbove(mapState, pos, LOOP_RIGHT);
 					--pos.col;
 					going = LEFT;
-					lastTurn = LEFT;
 			} else {
 					mapStateSetRight(mapState, pos, LOOP_LEFT);
 					mapStateSetAbove(mapState, pos, LOOP_LEFT);
 					++pos.line;
 					going = DOWN;
-					lastTurn = RIGHT;
 			}
 			break;
 
@@ -225,13 +218,11 @@ i32 main(void)
 					mapStateSetAbove(mapState, pos, LOOP_LEFT);
 					++pos.col;
 					going = RIGHT;
-					lastTurn = RIGHT;
 			} else {
 					mapStateSetLeft(mapState, pos, LOOP_RIGHT);
 					mapStateSetAbove(mapState, pos, LOOP_RIGHT);
 					++pos.line;
 					going = DOWN;
-					lastTurn = LEFT;
 			}
 			break;
 
@@ -243,8 +234,6 @@ i32 main(void)
 	size rightOfLoopArea = 0, loopArea = 0;
 	size leftOfLoopArea = 0;
 	size count = 0;
-	const enum MapState insideLoopState = lastTurn == LEFT ? LOOP_LEFT : LOOP_RIGHT;
-	const enum MapState outsideLoopState = lastTurn == LEFT ? LOOP_RIGHT : LOOP_LEFT;
 	enum MapState lastSeen = -1;
 	for (size line = 0; line < LINE_COUNT; ++line) {
 		for (size col = 0; col < LINE_SIZE; ++col) {
@@ -254,7 +243,7 @@ i32 main(void)
 
 				case LOOP_TBD:
 					++count;
-					mapState[line][col] = LOOP_COUNTED;
+					// mapState[line][col] = LOOP_COUNTED;
 				break;
 
 				case LOOP_PART:
@@ -264,14 +253,14 @@ i32 main(void)
 				case LOOP_RIGHT:
 					rightOfLoopArea += count + 1;
 					count = 0;
-					mapState[line][col] = LOOP_COUNTED;
+					// mapState[line][col] = LOOP_COUNTED;
 					lastSeen = LOOP_RIGHT;
 				break;
 
 				case LOOP_LEFT:
 					leftOfLoopArea += count + 1;
 					count = 0;
-					mapState[line][col] = LOOP_COUNTED;
+					// mapState[line][col] = LOOP_COUNTED;
 					lastSeen = LOOP_LEFT;
 				break;
 
@@ -292,8 +281,7 @@ i32 main(void)
 		}
 		printf("\n");
 	}
-	printf("Inside Of Loop: %s\ntotalArea: %zu\nloopArea: %zu\nrightOfLoopArea %zu\nleftOfLoopArea: %zu\nTotal: %zu\n", lastTurn == RIGHT ? "RIGHT" : "LEFT", totalArea, loopArea, rightOfLoopArea, leftOfLoopArea, loopArea + rightOfLoopArea + leftOfLoopArea);
+	printf("\ntotalArea: %zu\nloopArea: %zu\nrightOfLoopArea %zu\nleftOfLoopArea: %zu\nTotal: %zu\n", totalArea, loopArea, rightOfLoopArea, leftOfLoopArea, loopArea + rightOfLoopArea + leftOfLoopArea);
 
-	// printf("area: %zu", area);
 	return 0;
 }
