@@ -72,7 +72,7 @@ void MapBstFree(MapBst **t)
 	*t = NULL;
 }
 
-u32 MapBstSourceToDest(MapBst *t, const u32 source)
+size MapBstSourceToDest(MapBst *t, const size source)
 {
 	if (t == NULL) {
 		exit(420);
@@ -81,13 +81,8 @@ u32 MapBstSourceToDest(MapBst *t, const u32 source)
 	do {
 		if (source < t->map->sourceRangeStart) {
 			t = t->left;
-		} else if (source <= t->map->sourceRangeStart + t->map->range - 1 &&
-				 source >= t->map->sourceRangeStart) {
-			if (t->map->sourceRangeStart > t->map->destinationRangeStart) {
-				return source - (t->map->sourceRangeStart - t->map->destinationRangeStart);
-			} else {
-				return source + (t->map->destinationRangeStart - t->map->sourceRangeStart);
-			}
+		} else if (source < t->map->sourceRangeStart + t->map->range) {
+			return t->map->destinationRangeStart + (source - t->map->sourceRangeStart);
 		} else {
 			t = t->right;
 		}
@@ -104,7 +99,6 @@ int main(void)
 	char line[lineSize];
 	fgets(line, lineSize, stdin); // skip text
 	fgets(line, lineSize, stdin);
-
 	char *save = NULL;
 	char *token = strtok_r(line, " ", &save);
 
@@ -133,6 +127,9 @@ int main(void)
 			m->range = atoll(strtok_r(NULL, " ", &save2));
 			MapBstAdd(&tree, m);
 		}
+	}
+	for (u8 i = 0; i < seedsLen; ++i) {
+		seeds[i] = MapBstSourceToDest(tree, seeds[i]);
 	}
 	MapBstFree(&tree);
 
